@@ -2,12 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Mic2, Search } from "lucide-react";
+import { ChevronRight, Mic2, Plus, Search } from "lucide-react";
 import { AuthGate } from "@/components/auth-gate";
 import { PageHeader, EmptyState } from "@/components/page-header";
 import { Badge, Dot } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
+import { CreateUserModal } from "@/components/create-user-modal";
 import { api } from "@/lib/api";
 import { formatDate, formatINR, formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,7 @@ export default function ArtistsPage() {
   const [status, setStatus] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [adding, setAdding] = useState(false);
 
   const load = useCallback(async (query = q, st = status) => {
     setBusy(true);
@@ -105,6 +107,18 @@ export default function ArtistsPage() {
       <PageHeader
         title="Artists"
         description="Catalogue of artist accounts with catalogue size, earnings, and withdrawable balance."
+        actions={
+          <Button size="sm" onClick={() => setAdding(true)}>
+            <Plus className="size-4" />
+            Add user
+          </Button>
+        }
+      />
+      <CreateUserModal
+        open={adding}
+        defaultRole="artist"
+        onClose={() => setAdding(false)}
+        onCreated={() => void load()}
       />
 
       {error ? <p className="mb-4 text-sm text-danger">{error}</p> : null}
